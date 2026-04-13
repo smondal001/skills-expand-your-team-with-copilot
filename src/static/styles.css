@@ -220,6 +220,69 @@ section h3 {
   justify-content: center;
 }
 
+/* Social sharing */
+.share-section {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-top: 8px;
+  margin-top: 4px;
+  border-top: 1px solid var(--border-light);
+}
+
+.share-label {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.share-buttons {
+  display: flex;
+  gap: 4px;
+}
+
+.share-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background-color: var(--surface);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.share-button:hover {
+  background-color: var(--background);
+  border-color: var(--border-focus);
+  transform: translateY(-1px);
+}
+
+.share-twitter:hover {
+  color: #000;
+  border-color: #000;
+}
+
+.share-facebook:hover {
+  color: #1877f2;
+  border-color: #1877f2;
+}
+
+.share-copy:hover {
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+.share-copy-success {
+  color: var(--success) !important;
+  border-color: var(--success) !important;
+}
+
 /* Activity Tag */
 .activity-tag {
   position: absolute;

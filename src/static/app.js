@@ -586,6 +586,20 @@ document.addEventListener("DOMContentLoaded", () => {
         `
         }
       </div>
+      <div class="share-section">
+        <span class="share-label">Share:</span>
+        <div class="share-buttons">
+          <button class="share-button share-twitter" data-activity="${name}" aria-label="Share on X (Twitter)">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.259 5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </button>
+          <button class="share-button share-facebook" data-activity="${name}" aria-label="Share on Facebook">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          </button>
+          <button class="share-button share-copy" data-activity="${name}" aria-label="Copy link">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </button>
+        </div>
+      </div>
     `;
 
     // Add click handlers for delete buttons
@@ -604,7 +618,62 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
+    // Add click handlers for share buttons
+    activityCard.querySelector(".share-twitter").addEventListener("click", () => {
+      shareOnTwitter(name, details.description, formattedSchedule);
+    });
+    activityCard.querySelector(".share-facebook").addEventListener("click", () => {
+      shareOnFacebook(name);
+    });
+    activityCard.querySelector(".share-copy").addEventListener("click", (event) => {
+      copyActivityLink(name, event.currentTarget);
+    });
+
     activitiesList.appendChild(activityCard);
+  }
+
+  // Window features for social share popups
+  const SHARE_WINDOW_FEATURES = "noopener,noreferrer,width=600,height=400";
+
+  // Build a shareable URL for an activity
+  function getActivityShareUrl(activityName) {
+    const url = new URL(window.location.href);
+    url.search = "";
+    url.searchParams.set("activity", activityName);
+    return url.toString();
+  }
+
+  // Share on Twitter/X
+  function shareOnTwitter(name, description, schedule) {
+    const shareUrl = getActivityShareUrl(name);
+    const schoolName = document.querySelector("header h1").textContent.trim();
+    const text = `Check out "${name}" at ${schoolName}!\n${description}\nSchedule: ${schedule}`;
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(shareUrl)}`;
+    window.open(twitterUrl, "_blank", SHARE_WINDOW_FEATURES);
+  }
+
+  // Share on Facebook
+  function shareOnFacebook(name) {
+    const shareUrl = getActivityShareUrl(name);
+    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+    window.open(facebookUrl, "_blank", SHARE_WINDOW_FEATURES);
+  }
+
+  // Copy activity link to clipboard
+  async function copyActivityLink(name, button) {
+    const shareUrl = getActivityShareUrl(name);
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      const originalHtml = button.innerHTML;
+      button.innerHTML = `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>`;
+      button.classList.add("share-copy-success");
+      setTimeout(() => {
+        button.innerHTML = originalHtml;
+        button.classList.remove("share-copy-success");
+      }, 2000);
+    } catch (err) {
+      console.error("Failed to copy link:", err);
+    }
   }
 
   // Event listeners for search and filter
